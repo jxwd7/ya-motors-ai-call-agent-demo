@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Vapi from "@vapi-ai/web";
+import { VapiWidget } from "@vapi-ai/client-sdk-react";
+import "@vapi-ai/client-sdk-react/styles";
 import {
   ArrowRight,
   Bot,
-  Car,
   Check,
   ChevronRight,
   ClipboardList,
@@ -11,7 +12,6 @@ import {
   MessageSquare,
   PhoneCall,
   ShieldCheck,
-  Sparkles,
   TableProperties,
   Workflow,
   X,
@@ -88,6 +88,17 @@ const sampleQuestions = [
 ];
 
 type CallState = "missing-config" | "idle" | "connecting" | "live" | "ended" | "error";
+
+function getVapiConfig() {
+  const publicKey = import.meta.env.VITE_VAPI_PUBLIC_KEY as string | undefined;
+  const assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID as string | undefined;
+
+  return {
+    publicKey,
+    assistantId,
+    hasConfig: Boolean(publicKey && assistantId),
+  };
+}
 
 function RollingText({ children }: { children: string }) {
   return (
@@ -307,9 +318,7 @@ function SectionHeader({ eyebrow, title, body, inverse = false }: { eyebrow: str
 }
 
 function VapiDemoCard() {
-  const publicKey = import.meta.env.VITE_VAPI_PUBLIC_KEY as string | undefined;
-  const assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID as string | undefined;
-  const hasConfig = Boolean(publicKey && assistantId);
+  const { publicKey, assistantId, hasConfig } = getVapiConfig();
   const [callState, setCallState] = useState<CallState>(hasConfig ? "idle" : "missing-config");
   const [errorMessage, setErrorMessage] = useState("");
   const vapiRef = useRef<any>(null);
@@ -390,7 +399,7 @@ function VapiDemoCard() {
             </div>
             <p className="text-[24px] font-medium leading-[1.1] tracking-[-0.02em] text-gray-900 sm:text-[32px]">{hasConfig ? "Ready to connect." : "Live call demo not connected yet."}</p>
             <p className="mt-4 text-[15px] leading-[1.7] text-gray-600">
-              {hasConfig ? "Click the button to start a browser-based Vapi test call." : "Add VITE_VAPI_PUBLIC_KEY and VITE_VAPI_ASSISTANT_ID before showing the live call."}
+              {hasConfig ? "Use the floating YA Motors widget, or start a direct browser-based Vapi test call here." : "Add VITE_VAPI_PUBLIC_KEY and VITE_VAPI_ASSISTANT_ID before showing the live call."}
             </p>
             {errorMessage ? <p className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-[13px] text-red-700">{errorMessage}</p> : null}
             <div className="mt-6">
@@ -410,6 +419,43 @@ function VapiDemoCard() {
         </div>
       </div>
     </section>
+  );
+}
+
+function VapiFloatingWidget() {
+  const { publicKey, assistantId, hasConfig } = getVapiConfig();
+
+  if (!hasConfig || !publicKey || !assistantId) return null;
+
+  return (
+    <VapiWidget
+      publicKey={publicKey}
+      assistantId={assistantId}
+      mode="hybrid"
+      theme="light"
+      position="bottom-right"
+      size="full"
+      borderRadius="large"
+      baseBgColor="#ffffff"
+      accentColor="#F26522"
+      ctaButtonColor="#111827"
+      ctaButtonTextColor="#ffffff"
+      title="YA Motors AI Demo"
+      ctaTitle="Ask about rentals"
+      ctaSubtitle="Voice or chat"
+      startButtonText="Start voice call"
+      endButtonText="End call"
+      chatPlaceholder="Ask about Corolla weekly rates..."
+      chatFirstMessage="Hi, I can help with YA Motors rental pricing and quote follow-up. What type of car are you looking for?"
+      chatEmptyMessage="Ask about rental prices, weekly options, or SMS quote follow-up."
+      voiceEmptyMessage="Start a voice call and ask about cars, weekly rates, or monthly options."
+      hybridEmptyMessage="Choose voice or chat to ask about YA Motors rental options."
+      voiceShowTranscript
+      consentRequired
+      consentTitle="Before you start"
+      consentContent="This demo uses AI voice and chat. Do not share payment details, passwords, or private documents. Conversations may be processed to provide the demo response."
+      consentStorageKey="ya_motors_vapi_widget_consent"
+    />
   );
 }
 
@@ -603,6 +649,7 @@ export default function App() {
       <SmsAndCrm />
       <Offer />
       <Footer />
+      <VapiFloatingWidget />
     </main>
   );
 }
