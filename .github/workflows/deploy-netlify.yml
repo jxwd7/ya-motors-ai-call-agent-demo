@@ -31,7 +31,7 @@ jobs:
           VITE_WHATSAPP_MESSAGE: ${{ secrets.VITE_WHATSAPP_MESSAGE }}
 
       - name: Deploy to Netlify
-        run: npx netlify deploy --prod --dir=dist --site="$NETLIFY_SITE_ID" --auth="$NETLIFY_AUTH_TOKEN" --message="GitHub deploy $GITHUB_SHA"
+        run: npx netlify deploy --prod --no-build --dir=dist --site="$NETLIFY_SITE_ID" --auth="$NETLIFY_AUTH_TOKEN" --message="GitHub deploy $GITHUB_SHA"
         env:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
