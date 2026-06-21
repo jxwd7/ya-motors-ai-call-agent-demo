@@ -15,76 +15,115 @@ import {
   TableProperties,
   Workflow,
   X,
+  type LucideIcon,
 } from "lucide-react";
 import { ChromaFlow, FilmGrain, FlutedGlass, Shader, Swirl } from "shaders/react";
 
 const navLinks = [
-  { label: "Situation", href: "#situation" },
   { label: "Demo", href: "#demo" },
+  { label: "Workflow", href: "#workflow" },
+  { label: "Price File", href: "#price-file" },
   { label: "Offer", href: "#offer" },
 ];
 
-const proofChips = ["Built around rental calls", "Uses a price file", "Sends SMS quotes"];
+const proofChips = ["Answers rental calls", "Quotes from price file", "SMS / WhatsApp follow-up"];
 
-const defaultWhatsAppMessage = "Hi, I want to book the next step for the YA Motors AI call agent demo.";
+const defaultWhatsAppMessage = "Hi, I want to book the next step for the YA Motors AI receptionist demo.";
 
-const valuePoints = [
-  { title: "Recovered enquiries", body: "Reduce the chance that rental calls disappear when the team is busy." },
-  { title: "Faster quotes", body: "Give callers a consistent first answer from the current price-file context." },
-  { title: "Follow-up consistency", body: "Keep the next step visible with SMS/GHL follow-up instead of relying on memory." },
-];
-
-const nextSteps = [
-  "Connect the live Vapi assistant and call number.",
-  "Load the approved rental price file and handoff rules.",
-  "Run test calls, confirm scripts, then connect the WhatsApp handoff path.",
-];
-
-const situationCards = [
+const demoScenarios: Array<{ question: string; test: string; icon: LucideIcon }> = [
   {
-    title: "Missed rental calls",
-    body: "When the team is busy with vehicles or customers, new rental enquiries wait or disappear.",
-    icon: PhoneCall,
-  },
-  {
-    title: "Prices live in a file",
-    body: "Customers ask for daily, weekly, or monthly prices. Staff need to check the current sheet before quoting.",
+    question: "How much is a Corolla for a week?",
+    test: "Tests weekly price lookup from the rental knowledge file.",
     icon: TableProperties,
   },
   {
-    title: "Follow-up is manual",
-    body: "Even when the call goes well, someone still has to send the SMS quote and remember the next step.",
+    question: "Can you text me the quote?",
+    test: "Tests the SMS or WhatsApp follow-up handoff.",
     icon: MessageSquare,
+  },
+  {
+    question: "I need a car tomorrow morning.",
+    test: "Tests lead capture for date, vehicle type, and callback intent.",
+    icon: PhoneCall,
   },
 ];
 
-const solutionItems = [
-  "Answers common rental questions without waiting for staff.",
-  "Uses the price file instead of guessing rates.",
-  "Collects name, phone, dates, vehicle type, and rental duration.",
-  "Sends or prepares an SMS quote through Twilio or GoHighLevel.",
-  "Hands off unusual questions to the YA Motors team.",
+const oldWayItems = [
+  {
+    title: "Missed calls",
+    body: "Rental enquiries can arrive while the team is with customers, vehicles, or after-hours calls.",
+  },
+  {
+    title: "Manual quote checking",
+    body: "Staff still need to open the current price file before giving daily, weekly, or monthly rates.",
+  },
+  {
+    title: "Inconsistent follow-up",
+    body: "Even a good call can stall if the SMS quote, WhatsApp reply, or team callback is delayed.",
+  },
 ];
 
-const offerItems = [
-  "One working call agent for rental enquiries.",
-  "One sample price sheet converted into AI context.",
-  "SMS quote/follow-up template.",
-  "Basic lead capture and team notification.",
-  "GHL customer workflows for email, WhatsApp, iMessage/SMS, follow-up, and pipeline tracking.",
+const aiReceptionistItems = [
+  {
+    title: "Immediate response",
+    body: "The assistant answers rental questions quickly and keeps the conversation moving.",
+  },
+  {
+    title: "Approved price-file quoting",
+    body: "Rates come from the uploaded rental context instead of being guessed during the call.",
+  },
+  {
+    title: "Structured handoff",
+    body: "Name, phone, dates, vehicle preference, and next step are captured for the team.",
+  },
+];
+
+const workflowCards: Array<{ title: string; body: string; icon: LucideIcon }> = [
+  {
+    title: "Automated SMS quotes",
+    body: "After the call, the launch workflow can send the customer the quote and next step by SMS or WhatsApp.",
+    icon: MessageSquare,
+  },
+  {
+    title: "Smart follow-up reminders",
+    body: "Follow-up tasks can keep quoted leads visible instead of relying on memory or scattered phone notes.",
+    icon: ClipboardList,
+  },
+  {
+    title: "GHL communication CRM",
+    body: "Calls, messages, lead details, and pipeline stages can be configured into GoHighLevel before launch.",
+    icon: Workflow,
+  },
 ];
 
 const priceRows = [
-  ["Small hatch", "$45", "$280", "$950"],
-  ["Sedan", "$55", "$340", "$1,150"],
-  ["SUV", "$75", "$480", "$1,650"],
-  ["Van / ute", "$90+", "$580+", "$2,100+"],
+  ["Toyota Corolla", "$45", "$250", "$950"],
+  ["Toyota Camry", "$60", "$360", "$1,250"],
+  ["Hyundai i30", "$48", "$260", "$980"],
+  ["Mazda 3", "$52", "$280", "$1,050"],
+  ["Toyota RAV4", "$85", "$450", "$1,700"],
+  ["Toyota HiAce", "$120", "$650", "$2,400"],
 ];
 
-const sampleQuestions = [
-  "How much is a sedan for a week?",
-  "Can you text me the quote?",
-  "Do you have monthly rental options?",
+const offerItems = [
+  "One working Vapi AI receptionist for rental enquiries.",
+  "Approved rental price file converted into assistant context.",
+  "Call script, qualifying questions, and handoff rules.",
+  "SMS or WhatsApp quote follow-up template.",
+  "GoHighLevel workflow plan for leads, reminders, and pipeline stages.",
+  "Test calls and launch-ready approval pass before going live.",
+];
+
+const valuePoints = [
+  { title: "Recovered enquiries", body: "More rental calls get answered while the team stays focused on the shop." },
+  { title: "Faster quotes", body: "Customers hear a clear first quote from the same approved pricing context." },
+  { title: "Follow-up consistency", body: "Quote and callback steps are captured instead of disappearing after the call." },
+];
+
+const nextSteps = [
+  "Connect Vapi assistant and phone path.",
+  "Load approved rental price file and handoff rules.",
+  "Run test calls, approve scripts, then connect WhatsApp/GHL workflows.",
 ];
 
 type CallState = "missing-config" | "idle" | "connecting" | "live" | "ended" | "error";
@@ -128,7 +167,6 @@ function CtaLink({ children, href, variant = "orange", target, rel }: { children
   );
 }
 
-
 function getWhatsAppLink() {
   const rawNumber = import.meta.env.VITE_WHATSAPP_NUMBER as string | undefined;
   const number = rawNumber?.replace(/[^\d]/g, "");
@@ -162,6 +200,7 @@ function WhatsAppCta({ variant = "dark" }: { variant?: "orange" | "dark" | "ligh
     </CtaLink>
   );
 }
+
 function CtaButton({ children, onClick, disabled }: { children: string; onClick: () => void; disabled?: boolean }) {
   return (
     <button
@@ -210,7 +249,7 @@ function Navbar() {
               YA
             </a>
             <a href="#" className="hidden text-[14px] font-semibold text-gray-900 sm:block">
-              YA Motors AI Demo
+              YA Motors AI Receptionist
             </a>
             <div className="hidden items-center gap-6 md:flex">
               {navLinks.map((link) => (
@@ -222,7 +261,7 @@ function Navbar() {
           </div>
 
           <div className="hidden items-center gap-3 md:flex">
-            <span className="rounded-full bg-gray-100 px-3 py-2 text-[13px] text-gray-600">Vapi + SMS demo</span>
+            <span className="rounded-full bg-gray-100 px-3 py-2 text-[13px] text-gray-600">Vapi + workflow demo</span>
             <WhatsAppCta />
           </div>
 
@@ -244,7 +283,7 @@ function Navbar() {
           onClick={(event) => event.stopPropagation()}
         >
           <div className="mb-8 flex items-center justify-between">
-            <span className="rounded-full bg-gray-100 px-3 py-1.5 text-[13px] text-gray-600">YA Motors AI Demo</span>
+            <span className="rounded-full bg-gray-100 px-3 py-1.5 text-[13px] text-gray-600">YA Motors AI Receptionist</span>
             <button type="button" onClick={() => setMenuOpen(false)} className="grid h-9 w-9 place-items-center rounded-full bg-gray-900 text-white" aria-label="Close menu">
               <X size={17} />
             </button>
@@ -263,6 +302,40 @@ function Navbar() {
   );
 }
 
+function AgentContextCard() {
+  return (
+    <div className="rounded-[28px] bg-white/78 p-4 shadow-[0_24px_80px_rgba(17,24,39,0.12)] backdrop-blur-md">
+      <div className="relative overflow-hidden rounded-2xl bg-gray-900 p-5 text-white">
+        <div className="absolute -right-16 -top-16 h-44 w-44 rounded-full bg-[#F26522]/25 blur-3xl" />
+        <div className="relative z-10">
+          <div className="mb-9 flex items-center justify-between">
+            <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-[12px] text-white">
+              <span className="h-2 w-2 rounded-full bg-[#F26522]" />
+              Agent context loaded
+            </span>
+            <Bot className="text-[#F26522]" size={24} />
+          </div>
+          <p className="text-[13px] text-gray-300">YA Motors custom solution</p>
+          <p className="mt-2 text-[28px] font-medium leading-[1.05] tracking-[-0.03em]">Rental calls, price lookup, quote follow-up, and team handoff.</p>
+          <div className="mt-8 flex h-12 items-end gap-1.5">
+            {[45, 76, 100, 60, 82, 38, 70].map((height, index) => (
+              <span key={`${height}-${index}`} className="w-2 rounded-t-full bg-[#F26522]" style={{ height: `${height}%` }} />
+            ))}
+          </div>
+          <div className="mt-7 grid gap-2 text-[13px] text-gray-200">
+            {["Price-file context", "Lead capture", "SMS / WhatsApp handoff"].map((item) => (
+              <div key={item} className="flex items-center gap-2 rounded-2xl bg-white/8 px-3 py-2">
+                <Check size={14} className="text-[#F26522]" />
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Hero() {
   return (
     <section className="relative flex min-h-screen flex-col overflow-hidden bg-[#EFEFEF]">
@@ -270,18 +343,18 @@ function Hero() {
       <Navbar />
       <div className="relative z-20 flex flex-1 flex-col">
         <div className="flex-1" />
-        <div className="mx-auto grid w-full max-w-[1440px] gap-8 px-5 pb-14 sm:px-8 sm:pb-16 lg:grid-cols-[1fr_440px] lg:items-end lg:px-12 lg:pb-20">
+        <div className="mx-auto grid w-full max-w-[1440px] gap-8 px-5 pb-14 sm:px-8 sm:pb-16 lg:grid-cols-[1fr_460px] lg:items-end lg:px-12 lg:pb-20">
           <div>
-            <p className="mb-5 text-[13px] leading-[14px] tracking-wide text-gray-900 sm:mb-8">Quick demo for YA Motors</p>
-            <h1 className="max-w-5xl text-[clamp(2.1rem,7vw,4.8rem)] font-medium leading-[1.05] tracking-[-0.04em] text-gray-900 sm:text-[clamp(3rem,5vw,5.1rem)]">
-              A call-answering AI that knows your prices.
+            <p className="mb-5 text-[13px] font-semibold uppercase leading-[14px] tracking-[0.12em] text-[#F26522] sm:mb-8">YA Motors Custom Solution</p>
+            <h1 className="max-w-5xl text-[clamp(2.35rem,7vw,5.25rem)] font-medium leading-[1.02] tracking-[-0.05em] text-gray-900 sm:text-[clamp(3rem,5vw,5.4rem)]">
+              Your 24/7 AI Receptionist
             </h1>
             <p className="mt-6 max-w-2xl text-[15px] font-medium leading-[1.7] text-gray-700 sm:text-[17px]">
-              This is not a big website pitch. It is a simple demo of what YA Motors could use tomorrow: a Vapi calling agent that answers rental enquiries, checks a price sheet, captures the customer, and sends an SMS follow-up.
+              Never miss a rental enquiry again. The AI answers calls, quotes from your price sheet, captures the customer, and follows up by SMS or WhatsApp automatically.
             </p>
             <div className="mt-8 flex flex-col gap-4 sm:mt-10 sm:flex-row sm:items-center sm:gap-5">
               <WhatsAppCta variant="orange" />
-              <CtaLink href="#price-file" variant="light">See what it knows</CtaLink>
+              <CtaLink href="#demo" variant="light">Try live demo</CtaLink>
             </div>
             <div className="mt-7 flex flex-wrap gap-2.5">
               {proofChips.map((chip) => (
@@ -291,16 +364,7 @@ function Hero() {
               ))}
             </div>
           </div>
-          <div className="rounded-[28px] bg-white/78 p-4 shadow-[0_24px_80px_rgba(17,24,39,0.12)] backdrop-blur-md">
-            <div className="rounded-2xl bg-gray-900 p-5 text-white">
-              <div className="mb-10 flex items-center justify-between">
-                <span className="rounded-full bg-white/10 px-3 py-1.5 text-[12px]">Test page</span>
-                <Bot className="text-[#F26522]" size={22} />
-              </div>
-              <p className="text-[13px] text-gray-300">Agent context</p>
-              <p className="mt-2 text-[28px] font-medium leading-[1.05] tracking-[-0.03em]">Rental calls, quote SMS, and team handoff in one flow.</p>
-            </div>
-          </div>
+          <AgentContextCard />
         </div>
       </div>
     </section>
@@ -350,7 +414,7 @@ function VapiDemoCard() {
     if (callState === "live") return "live call";
     if (callState === "ended") return "call ended";
     if (callState === "error") return "error";
-    return "test page";
+    return "ready";
   }, [callState]);
 
   const startCall = async () => {
@@ -379,22 +443,42 @@ function VapiDemoCard() {
 
   return (
     <section id="demo" className="bg-white py-16 sm:py-20 lg:py-28">
-      <div className="mx-auto grid max-w-[1440px] gap-8 px-5 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:px-12">
-        <SectionHeader
-          eyebrow="Vapi agent demo"
-          title="Agent context loaded"
-          body="YA Motors services, sample rental prices, handoff rules, and SMS quote template."
-        />
+      <div className="mx-auto grid max-w-[1440px] gap-8 px-5 sm:px-8 lg:grid-cols-[0.95fr_1.05fr] lg:px-12">
+        <div>
+          <SectionHeader
+            eyebrow="Live Vapi demo"
+            title="Experience the AI receptionist."
+            body="Use the live Vapi assistant and try rental questions that prove price lookup, lead capture, and quote follow-up."
+          />
+          <div className="grid gap-3">
+            {demoScenarios.map((scenario) => {
+              const Icon = scenario.icon;
+              return (
+                <article key={scenario.question} className="group rounded-2xl border border-gray-100 bg-[#F7F7F7] p-4 transition-colors hover:border-[#F26522]/30 hover:bg-white">
+                  <div className="flex items-start gap-3">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-[#F26522] shadow-[0_8px_20px_rgba(17,24,39,0.06)]">
+                      <Icon size={18} />
+                    </span>
+                    <div>
+                      <p className="text-[15px] font-semibold leading-[1.4] text-gray-900">"{scenario.question}"</p>
+                      <p className="mt-1 text-[13px] leading-[1.6] text-gray-600">{scenario.test}</p>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </div>
         <div className="rounded-[28px] border border-gray-100 bg-[#F7F7F7] p-4 shadow-[0_20px_60px_rgba(17,24,39,0.08)] sm:p-6">
           <div className="rounded-2xl bg-white p-5 sm:p-7">
             <div className="mb-7 flex flex-wrap items-center justify-between gap-3">
               <div>
-                <p className="text-[13px] font-semibold text-gray-900">Vapi agent demo</p>
+                <p className="text-[13px] font-semibold text-gray-900">YA Motors Vapi assistant</p>
                 <p className="mt-1 text-[13px] text-gray-500">Status: {status}</p>
               </div>
               <span className="inline-flex items-center gap-2 rounded-full bg-gray-900 px-3 py-1.5 text-[12px] font-medium text-white">
                 <span className={`h-2 w-2 rounded-full ${callState === "live" ? "bg-green-400" : callState === "error" ? "bg-red-400" : "bg-[#F26522]"}`} />
-                {hasConfig ? "Ready" : "Keys needed"}
+                {hasConfig ? "Live-ready" : "Keys needed"}
               </span>
             </div>
             <p className="text-[24px] font-medium leading-[1.1] tracking-[-0.02em] text-gray-900 sm:text-[32px]">{hasConfig ? "Ready to connect." : "Live call demo not connected yet."}</p>
@@ -405,12 +489,13 @@ function VapiDemoCard() {
             <div className="mt-6">
               <CtaButton onClick={callState === "live" ? stopCall : startCall} disabled={buttonDisabled}>{buttonLabel}</CtaButton>
             </div>
-            <div className="mt-8 border-t border-gray-100 pt-6">
-              <p className="mb-4 text-[13px] font-semibold text-gray-900">Try asking:</p>
-              <div className="grid gap-3">
-                {sampleQuestions.map((question) => (
-                  <div key={question} className="rounded-2xl bg-gray-50 px-4 py-3 text-[14px] font-medium text-gray-700">
-                    Ask: "{question}"
+            <div className="mt-8 rounded-2xl bg-gray-50 p-4">
+              <p className="text-[13px] font-semibold text-gray-900">What the assistant is loaded with</p>
+              <div className="mt-4 grid gap-2 text-[13px] leading-[1.6] text-gray-700">
+                {["Rental pricing examples", "Lead capture questions", "SMS / WhatsApp quote template", "Team handoff rules"].map((item) => (
+                  <div key={item} className="flex gap-2">
+                    <Check className="mt-0.5 shrink-0 text-[#F26522]" size={15} />
+                    {item}
                   </div>
                 ))}
               </div>
@@ -440,7 +525,7 @@ function VapiFloatingWidget() {
       accentColor="#F26522"
       ctaButtonColor="#111827"
       ctaButtonTextColor="#ffffff"
-      title="YA Motors AI Demo"
+      title="YA Motors AI Receptionist"
       ctaTitle="Ask about rentals"
       ctaSubtitle="Voice or chat"
       startButtonText="Start voice call"
@@ -459,112 +544,167 @@ function VapiFloatingWidget() {
   );
 }
 
-function Situation() {
+function OldWayVsSolution() {
   return (
-    <section id="situation" className="bg-[#F5F5F5] py-16 sm:py-20 lg:py-28">
+    <section className="bg-[#F5F5F5] py-16 sm:py-20 lg:py-28">
       <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
         <SectionHeader
-          eyebrow="Current Situation"
-          title="Calls are valuable, but they interrupt the shop."
-          body="For a small auto business, the same calls come in every day. The problem is not interest. The problem is answering fast, giving the right price, and following up before the customer calls someone else."
+          eyebrow="The operating gap"
+          title="The problem is not demand. It is speed to answer and follow up."
+          body="YA Motors already has valuable rental enquiries. The AI receptionist gives those calls a consistent first response, a price-file quote, and a clear next step."
         />
-        <div className="grid gap-5 md:grid-cols-3">
-          {situationCards.map((card) => {
-            const Icon = card.icon;
-            return (
-              <article key={card.title} className="rounded-2xl bg-white p-6 shadow-[0_12px_36px_rgba(17,24,39,0.06)]">
-                <span className="mb-8 grid h-11 w-11 place-items-center rounded-full bg-gray-900 text-white"><Icon size={19} /></span>
-                <h3 className="text-[20px] font-medium tracking-[-0.02em] text-gray-900">{card.title}</h3>
-                <p className="mt-3 text-[14px] leading-[1.7] text-gray-600">{card.body}</p>
-              </article>
-            );
-          })}
+        <div className="grid gap-6 lg:grid-cols-2">
+          <article className="rounded-[28px] border border-gray-200 bg-white p-6 shadow-[0_12px_36px_rgba(17,24,39,0.06)] sm:p-8">
+            <div className="mb-8 flex items-center justify-between">
+              <h3 className="text-[28px] font-medium tracking-[-0.03em] text-gray-900">The old way</h3>
+              <span className="rounded-full bg-gray-100 px-3 py-1.5 text-[12px] font-medium text-gray-600">Manual</span>
+            </div>
+            <div className="grid gap-4">
+              {oldWayItems.map((item) => (
+                <div key={item.title} className="flex gap-3 rounded-2xl bg-[#F7F7F7] p-4">
+                  <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-gray-400" />
+                  <div>
+                    <p className="text-[16px] font-semibold text-gray-900">{item.title}</p>
+                    <p className="mt-1 text-[14px] leading-[1.7] text-gray-600">{item.body}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </article>
+          <article className="relative overflow-hidden rounded-[28px] bg-gray-900 p-6 text-white shadow-[0_22px_70px_rgba(17,24,39,0.18)] sm:p-8">
+            <div className="absolute -right-20 -top-24 h-56 w-56 rounded-full bg-[#F26522]/25 blur-3xl" />
+            <div className="relative z-10">
+              <div className="mb-8 flex items-center justify-between">
+                <h3 className="text-[28px] font-medium tracking-[-0.03em] text-white">The AI receptionist</h3>
+                <span className="rounded-full bg-[#F26522] px-3 py-1.5 text-[12px] font-medium text-white">Configured flow</span>
+              </div>
+              <div className="grid gap-4">
+                {aiReceptionistItems.map((item) => (
+                  <div key={item.title} className="flex gap-3 rounded-2xl bg-white/8 p-4">
+                    <Check className="mt-0.5 shrink-0 text-[#F26522]" size={18} />
+                    <div>
+                      <p className="text-[16px] font-semibold text-white">{item.title}</p>
+                      <p className="mt-1 text-[14px] leading-[1.7] text-gray-300">{item.body}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </article>
         </div>
       </div>
     </section>
   );
 }
 
-function SolutionAndPrice() {
+function CompleteLoopIntegration() {
   return (
-    <section id="price-file" className="bg-white py-16 sm:py-20 lg:py-28">
-      <div className="mx-auto grid max-w-[1440px] gap-8 px-5 sm:px-8 lg:grid-cols-2 lg:px-12">
-        <div className="rounded-[28px] bg-gray-900 p-6 text-white sm:p-8">
-          <SectionHeader eyebrow="The Solution" title="One AI agent answers, quotes, and follows up." body="The Vapi agent is trained with YA Motors' business context. It can answer the call, ask the right qualifying questions, look up the sample pricing file, then prepare a text message with the quote and next step." inverse />
-          <div className="mt-8 grid gap-3">
-            {solutionItems.map((item) => (
-              <div key={item} className="flex gap-3 rounded-2xl bg-white/8 p-4 text-[14px] leading-[1.6] text-gray-100">
-                <Check className="mt-0.5 shrink-0 text-[#F26522]" size={17} />
-                <span>{item}</span>
+    <section id="workflow" className="bg-white py-16 sm:py-20 lg:py-28">
+      <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
+        <SectionHeader
+          eyebrow="Complete loop integration"
+          title="From first ring to the next booked step."
+          body="The launch workflow can connect the call, quote follow-up, reminders, and GHL pipeline so rental enquiries do not fall through the cracks."
+        />
+        <div className="grid gap-6 lg:grid-cols-12">
+          <article className="rounded-[28px] bg-[#F5F5F5] p-6 shadow-[0_12px_36px_rgba(17,24,39,0.06)] sm:p-8 lg:col-span-5">
+            <div className="mb-8 flex items-start gap-4">
+              <span className="grid h-12 w-12 place-items-center rounded-full bg-white text-[#F26522]">
+                <MessageSquare size={22} />
+              </span>
+              <div>
+                <h3 className="text-[24px] font-medium tracking-[-0.03em] text-gray-900">Automated SMS quotes</h3>
+                <p className="mt-2 text-[14px] leading-[1.7] text-gray-600">The configured launch flow can send a simple quote after the call, keeping the next step in the customer thread.</p>
               </div>
-            ))}
-          </div>
-        </div>
-        <div className="rounded-[28px] bg-[#F5F5F5] p-6 sm:p-8">
-          <div className="mb-7 flex items-center gap-3">
-            <span className="grid h-11 w-11 place-items-center rounded-full bg-white text-[#F26522]"><ClipboardList size={20} /></span>
-            <div>
-              <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-[#F26522]">Sample Price File</p>
-              <h3 className="text-[28px] font-medium tracking-[-0.03em] text-gray-900">Rental rates the agent can quote</h3>
+            </div>
+            <div className="mx-auto flex min-h-[300px] max-w-[300px] flex-col rounded-t-[2rem] border-x-4 border-t-4 border-gray-900 bg-gray-900 px-4 pt-6 text-white shadow-[0_20px_60px_rgba(17,24,39,0.18)]">
+              <div className="mx-auto mb-5 h-1 w-16 rounded-full bg-white/20" />
+              <div className="grid gap-3 text-[12px] leading-[1.5]">
+                <p className="w-5/6 rounded-2xl bg-white px-3 py-3 text-gray-800">Hi Ahmed, thanks for calling YA Motors. Your quote for a Toyota Camry is $360/week.</p>
+                <p className="w-4/6 justify-self-end rounded-2xl bg-[#F26522] px-3 py-3 text-white">Great, how do I book?</p>
+                <p className="w-5/6 rounded-2xl bg-white px-3 py-3 text-gray-800">Reply YES and the team will confirm availability and pickup details.</p>
+              </div>
+            </div>
+          </article>
+          <div className="grid gap-6 lg:col-span-7">
+            <div className="grid gap-6 md:grid-cols-2">
+              {workflowCards.slice(1).map((card) => {
+                const Icon = card.icon;
+                return (
+                  <article key={card.title} className="rounded-[28px] border border-gray-100 bg-white p-6 shadow-[0_12px_36px_rgba(17,24,39,0.06)] sm:p-8">
+                    <span className="mb-6 grid h-12 w-12 place-items-center rounded-full bg-[#F5F5F5] text-[#F26522]">
+                      <Icon size={21} />
+                    </span>
+                    <h3 className="text-[22px] font-medium tracking-[-0.03em] text-gray-900">{card.title}</h3>
+                    <p className="mt-3 text-[14px] leading-[1.7] text-gray-600">{card.body}</p>
+                  </article>
+                );
+              })}
+            </div>
+            <div className="rounded-[28px] bg-gray-900 p-6 text-white sm:p-8">
+              <div className="mb-7 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-[#F26522]">Communication CRM</p>
+                  <h3 className="mt-2 text-[26px] font-medium tracking-[-0.03em] text-white">Channels into one customer record</h3>
+                </div>
+                <Workflow className="text-[#F26522]" size={28} />
+              </div>
+              <div className="grid gap-3 sm:grid-cols-[1fr_auto_1fr_auto_1fr] sm:items-center">
+                <div className="grid gap-2">
+                  {["Calls", "WhatsApp", "SMS / iMessage"].map((label) => <span key={label} className="rounded-full bg-white/10 px-4 py-2 text-center text-[13px] font-medium text-gray-100">{label}</span>)}
+                </div>
+                <ChevronRight className="mx-auto hidden text-[#F26522] sm:block" />
+                <div className="rounded-2xl bg-white px-4 py-6 text-center text-[14px] font-semibold text-gray-900">GHL workflow setup</div>
+                <ChevronRight className="mx-auto hidden text-[#F26522] sm:block" />
+                <div className="grid gap-2">
+                  {["Lead captured", "Reminder created", "Booking recovered"].map((label) => <span key={label} className="rounded-full bg-white/10 px-4 py-2 text-center text-[13px] font-medium text-gray-100">{label}</span>)}
+                </div>
+              </div>
             </div>
           </div>
-          <div className="overflow-hidden rounded-2xl bg-white shadow-[0_12px_36px_rgba(17,24,39,0.06)]">
-            <table className="w-full text-left text-[14px]">
-              <thead className="bg-gray-900 text-white">
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function DataDrivenPricing() {
+  return (
+    <section id="price-file" className="bg-[#F5F5F5] py-16 sm:py-20 lg:py-28">
+      <div className="mx-auto grid max-w-[1440px] gap-8 px-5 sm:px-8 lg:grid-cols-[0.8fr_1.2fr] lg:px-12">
+        <SectionHeader
+          eyebrow="Data-driven rental quotes"
+          title="The AI quotes from the uploaded price file instead of guessing."
+          body="This demo knowledge file gives the assistant a few sample vehicles and weekly rates. Before launch, it is replaced with YA Motors' approved rental file."
+        />
+        <div className="rounded-[28px] bg-white p-4 shadow-[0_12px_36px_rgba(17,24,39,0.06)] sm:p-6">
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-gray-900 px-4 py-4 text-white">
+            <div className="flex items-center gap-3">
+              <ClipboardList className="text-[#F26522]" size={20} />
+              <div>
+                <p className="text-[13px] font-semibold">YA_MOTORS_DEMO_PRICING.csv</p>
+                <p className="mt-1 text-[12px] text-gray-300">Demo knowledge source</p>
+              </div>
+            </div>
+            <span className="rounded-full bg-[#F26522] px-3 py-1.5 text-[12px] font-semibold text-white">Demo price file</span>
+          </div>
+          <div className="overflow-x-auto rounded-2xl border border-gray-100">
+            <table className="w-full min-w-[620px] text-left text-[14px]">
+              <thead className="bg-[#F7F7F7] text-gray-900">
                 <tr>
-                  {['Vehicle', 'Daily', 'Weekly', 'Monthly'].map((heading) => <th key={heading} className="px-4 py-3 font-medium">{heading}</th>)}
+                  {["Vehicle", "Daily", "Weekly", "Monthly"].map((heading) => <th key={heading} className="px-4 py-3 font-semibold">{heading}</th>)}
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="bg-white">
                 {priceRows.map((row) => (
-                  <tr key={row[0]} className="border-b border-gray-100 last:border-0">
-                    {row.map((cell, index) => <td key={cell} className={`px-4 py-4 ${index === 0 ? "font-semibold text-gray-900" : "text-gray-600"}`}>{cell}</td>)}
+                  <tr key={row[0]} className="border-t border-gray-100">
+                    {row.map((cell, index) => <td key={cell} className={`px-4 py-4 ${index === 0 ? "font-semibold text-gray-900" : index === 2 ? "font-semibold text-[#F26522]" : "text-gray-600"}`}>{cell}</td>)}
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <p className="mt-4 text-[13px] leading-[1.6] text-gray-500">Demo prices only. Replace this with YA Motors' real rental file before launch.</p>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function SmsAndCrm() {
-  return (
-    <section className="bg-[#F5F5F5] py-16 sm:py-20 lg:py-28">
-      <div className="mx-auto grid max-w-[1440px] gap-8 px-5 sm:px-8 lg:grid-cols-2 lg:px-12">
-        <div className="rounded-[28px] bg-white p-6 shadow-[0_12px_36px_rgba(17,24,39,0.06)] sm:p-8">
-          <SectionHeader eyebrow="SMS Follow-up" title="The call should end with a text message." body="A good demo should show the business owner the outcome, not just the AI talking. After the call, the system can send the customer a simple quote SMS and notify the team." />
-          <p className="text-[14px] leading-[1.7] text-gray-600">Try the SMS preview. In the live version, this message would send through Twilio or GoHighLevel after the Vapi call finishes.</p>
-          <div className="mt-7 rounded-3xl bg-gray-900 p-4 text-white">
-            <div className="mb-4 flex items-center gap-2 text-[12px] text-gray-300"><MessageSquare size={14} /> SMS preview default</div>
-            <p className="rounded-2xl bg-white px-4 py-4 text-[14px] leading-[1.7] text-gray-800">
-              Hi Ahmed, thanks for calling YA Motors. Your demo quote is Sedan - $340/week. Reply YES and our team will confirm availability and pickup details.
-            </p>
-          </div>
-        </div>
-        <div className="rounded-[28px] bg-white p-6 shadow-[0_12px_36px_rgba(17,24,39,0.06)] sm:p-8">
-          <SectionHeader eyebrow="GHL Communication CRM" title="All customer messages in one place." body="The $5,000 setup also includes GoHighLevel customer workflows. Think of it as the communication CRM: calls, email, WhatsApp, and iMessage/SMS can be captured in one customer record instead of scattered across phones and inboxes." />
-          <div className="grid gap-3">
-            {["New lead and missed-call workflows.", "SMS quote follow-up and reminder workflows.", "Customer pipeline stages for new enquiry, quoted, follow-up, and booked.", "Team notifications so YA Motors knows who needs a callback."].map((item) => (
-              <div key={item} className="flex gap-3 text-[14px] leading-[1.6] text-gray-700"><Check className="mt-0.5 shrink-0 text-[#F26522]" size={16} /> {item}</div>
-            ))}
-          </div>
-          <div className="mt-8 rounded-3xl bg-[#F5F5F5] p-5">
-            <div className="grid gap-3 sm:grid-cols-[1fr_auto_1fr_auto_1fr] sm:items-center">
-              <div className="grid gap-2">
-                {['Email', 'WhatsApp', 'iMessage / SMS'].map((label) => <span key={label} className="rounded-full bg-white px-4 py-2 text-center text-[13px] font-medium text-gray-800">{label}</span>)}
-              </div>
-              <ChevronRight className="mx-auto hidden text-gray-400 sm:block" />
-              <div className="rounded-2xl bg-gray-900 px-4 py-6 text-center text-[14px] font-semibold text-white"><Workflow className="mx-auto mb-2 text-[#F26522]" size={22} />GHL Communication CRM</div>
-              <ChevronRight className="mx-auto hidden text-gray-400 sm:block" />
-              <div className="grid gap-2">
-                {['Time saved', 'More leads followed up', 'Bookings recovered'].map((label) => <span key={label} className="rounded-full bg-white px-4 py-2 text-center text-[13px] font-medium text-gray-800">{label}</span>)}
-              </div>
-            </div>
-          </div>
+          <p className="mt-4 text-[13px] leading-[1.6] text-gray-500">Demo price file. Replace with YA Motors' approved file before launch.</p>
         </div>
       </div>
     </section>
@@ -578,9 +718,9 @@ function Offer() {
         <div className="grid overflow-hidden rounded-[32px] bg-gray-900 lg:grid-cols-[1fr_420px]">
           <div className="p-6 text-white sm:p-10 lg:p-12">
             <p className="mb-4 text-[13px] font-semibold uppercase tracking-[0.12em] text-[#F26522]">Simple Offer</p>
-            <h2 className="max-w-3xl text-[clamp(2rem,5vw,4.2rem)] font-medium leading-[1.05] tracking-[-0.04em]">Build the first working version for YA Motors.</h2>
+            <h2 className="max-w-3xl text-[clamp(2rem,5vw,4.2rem)] font-medium leading-[1.05] tracking-[-0.04em]">Build the first working AI receptionist for YA Motors.</h2>
             <p className="mt-6 max-w-3xl text-[15px] leading-[1.7] text-gray-300 sm:text-[17px]">
-              Setup includes the Vapi call agent, the first price-file context, SMS quote flow, GoHighLevel communication CRM workflows, test calls, and handoff rules. Monthly retainer covers prompt updates, price-file changes, and small workflow improvements.
+              Setup includes the Vapi AI receptionist, the approved price-file context, quote follow-up workflow, GoHighLevel communication CRM setup, test calls, and handoff rules. Monthly retainer covers prompt updates, price-file changes, and small workflow improvements.
             </p>
             <div className="mt-8 grid gap-3 sm:grid-cols-2">
               {offerItems.map((item) => (
@@ -619,7 +759,7 @@ function Offer() {
               <WhatsAppCta />
             </div>
             <p className="mt-6 rounded-2xl bg-white/15 p-4 text-[13px] leading-[1.6] text-white/90">
-              Demo credentials are placeholders until launch; final scripts and price file are approved before going live.
+              Final scripts, pricing, credentials, and handoff rules are approved before going live.
             </p>
           </aside>
         </div>
@@ -633,7 +773,7 @@ function Footer() {
     <footer className="bg-[#F5F5F5] px-5 py-8 sm:px-8 lg:px-12">
       <div className="mx-auto flex max-w-[1440px] flex-col gap-3 text-[13px] text-gray-500 sm:flex-row sm:items-center sm:justify-between">
         <p>Demo page by Autosyntech for YA Motors.</p>
-        <p>Vapi and SMS credentials are placeholders until launch.</p>
+        <p>Vapi, SMS, WhatsApp, and GHL credentials are configured before launch.</p>
       </div>
     </footer>
   );
@@ -643,17 +783,13 @@ export default function App() {
   return (
     <main>
       <Hero />
-      <Situation />
       <VapiDemoCard />
-      <SolutionAndPrice />
-      <SmsAndCrm />
+      <OldWayVsSolution />
+      <CompleteLoopIntegration />
+      <DataDrivenPricing />
       <Offer />
       <Footer />
       <VapiFloatingWidget />
     </main>
   );
 }
-
-
-
-
