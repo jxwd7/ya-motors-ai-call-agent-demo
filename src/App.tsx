@@ -170,11 +170,8 @@ function getVapiConfig() {
 
 function RollingText({ children }: { children: string }) {
   return (
-    <span className="block h-[20px] overflow-hidden">
-      <span className="flex flex-col transition-transform duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:-translate-y-1/2">
-        <span>{children}</span>
-        <span>{children}</span>
-      </span>
+    <span className="block h-[20px] overflow-hidden whitespace-nowrap">
+      <span className="block whitespace-nowrap">{children}</span>
     </span>
   );
 }
@@ -187,7 +184,7 @@ function CtaLink({ children, href, variant = "orange", target, rel }: { children
   }[variant];
 
   return (
-    <a href={href} target={target} rel={rel} className={`group inline-flex w-fit items-center gap-3 rounded-full py-2 pl-5 pr-2 text-[13px] font-medium leading-[14px] transition-all duration-300 sm:pl-6 ${classes}`}>
+    <a href={href} target={target} rel={rel} className={`group inline-flex w-fit max-w-full items-center gap-3 rounded-full py-2 pl-5 pr-2 text-[13px] font-medium leading-[14px] transition-all duration-300 sm:pl-6 ${classes}`}>
       <RollingText>{children}</RollingText>
       <span className="grid h-7 w-7 place-items-center rounded-full bg-white sm:h-8 sm:w-8">
         <ArrowRight size={15} className={`transition-transform duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:-rotate-45 ${variant === "light" ? "text-gray-900" : "text-[#F26522]"}`} />
