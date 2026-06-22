@@ -126,6 +126,35 @@ const nextSteps = [
   "Run test calls, approve scripts, then connect WhatsApp/GHL workflows.",
 ];
 
+const testSteps = [
+  "Click Start live AI call.",
+  "Allow microphone access in the browser.",
+  "Ask the three demo questions below.",
+];
+
+const faqItems = [
+  {
+    question: "Does this replace staff?",
+    answer: "No. It handles the first response, basic rental questions, lead capture, and handoff so the team can focus on customers and vehicles.",
+  },
+  {
+    question: "Can it use YA Motors' real prices?",
+    answer: "Yes. The demo file is replaced with the approved rental price sheet before launch.",
+  },
+  {
+    question: "Can it send SMS or WhatsApp follow-up?",
+    answer: "Yes, that is configured as part of the launch workflow. This page does not send real customer messages yet.",
+  },
+  {
+    question: "What if it does not know the answer?",
+    answer: "It should capture the customer details and hand the question to the YA Motors team instead of guessing.",
+  },
+  {
+    question: "How long to launch?",
+    answer: "The first working version is built after the assistant, price file, scripts, and handoff rules are approved and tested.",
+  },
+];
+
 type CallState = "missing-config" | "idle" | "connecting" | "live" | "ended" | "error";
 
 function getVapiConfig() {
@@ -141,11 +170,8 @@ function getVapiConfig() {
 
 function RollingText({ children }: { children: string }) {
   return (
-    <span className="block h-[20px] overflow-hidden">
-      <span className="flex flex-col transition-transform duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:-translate-y-1/2">
-        <span>{children}</span>
-        <span>{children}</span>
-      </span>
+    <span className="block h-[20px] overflow-hidden whitespace-nowrap">
+      <span className="block whitespace-nowrap">{children}</span>
     </span>
   );
 }
@@ -158,7 +184,7 @@ function CtaLink({ children, href, variant = "orange", target, rel }: { children
   }[variant];
 
   return (
-    <a href={href} target={target} rel={rel} className={`group inline-flex w-fit items-center gap-3 rounded-full py-2 pl-5 pr-2 text-[13px] font-medium leading-[14px] transition-all duration-300 sm:pl-6 ${classes}`}>
+    <a href={href} target={target} rel={rel} className={`group inline-flex w-fit max-w-full items-center gap-3 rounded-full py-2 pl-5 pr-2 text-[13px] font-medium leading-[14px] transition-all duration-300 sm:pl-6 ${classes}`}>
       <RollingText>{children}</RollingText>
       <span className="grid h-7 w-7 place-items-center rounded-full bg-white sm:h-8 sm:w-8">
         <ArrowRight size={15} className={`transition-transform duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:-rotate-45 ${variant === "light" ? "text-gray-900" : "text-[#F26522]"}`} />
@@ -176,7 +202,7 @@ function getWhatsAppLink() {
   return `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
 }
 
-function WhatsAppCta({ variant = "dark" }: { variant?: "orange" | "dark" | "light" }) {
+function WhatsAppCta({ variant = "dark", label = "Message to book next step" }: { variant?: "orange" | "dark" | "light"; label?: string }) {
   const href = getWhatsAppLink();
 
   if (!href) {
@@ -196,7 +222,7 @@ function WhatsAppCta({ variant = "dark" }: { variant?: "orange" | "dark" | "ligh
 
   return (
     <CtaLink href={href} target="_blank" rel="noreferrer" variant={variant}>
-      Message to book next step
+      {label}
     </CtaLink>
   );
 }
@@ -245,8 +271,8 @@ function Navbar() {
       <header className="relative z-20 mx-auto max-w-[1440px] p-2 sm:p-3">
         <nav className="flex items-center justify-between rounded-full bg-white p-[5px] shadow-[0_2px_18px_rgba(0,0,0,0.04)]">
           <div className="flex items-center gap-6">
-            <a href="#" className="grid h-9 w-9 place-items-center rounded-full bg-gray-900 text-[10px] font-bold leading-[11px] tracking-tight text-white sm:h-10 sm:w-10">
-              YA
+            <a href="#" className="rounded-full bg-gray-900 px-4 py-2 text-[15px] font-semibold italic tracking-[-0.04em] text-white sm:px-5 sm:text-[16px]">
+              YA Motors
             </a>
             <a href="#" className="hidden text-[14px] font-semibold text-gray-900 sm:block">
               YA Motors AI Receptionist
@@ -262,7 +288,7 @@ function Navbar() {
 
           <div className="hidden items-center gap-3 md:flex">
             <span className="rounded-full bg-gray-100 px-3 py-2 text-[13px] text-gray-600">Vapi + workflow demo</span>
-            <WhatsAppCta />
+            <CtaLink href="#demo" variant="orange">Try demo</CtaLink>
           </div>
 
           <button
@@ -295,7 +321,7 @@ function Navbar() {
               </a>
             ))}
           </div>
-          <WhatsAppCta variant="orange" />
+          <CtaLink href="#demo" variant="orange">Try demo</CtaLink>
         </div>
       </div>
     </>
@@ -345,16 +371,21 @@ function Hero() {
         <div className="flex-1" />
         <div className="mx-auto grid w-full max-w-[1440px] gap-8 px-5 pb-14 sm:px-8 sm:pb-16 lg:grid-cols-[1fr_460px] lg:items-end lg:px-12 lg:pb-20">
           <div>
-            <p className="mb-5 text-[13px] font-semibold uppercase leading-[14px] tracking-[0.12em] text-[#F26522] sm:mb-8">YA Motors Custom Solution</p>
+            <div className="mb-5 sm:mb-8">
+              <p className="text-[13px] font-semibold uppercase leading-[14px] tracking-[0.12em] text-[#F26522]">YA Motors Custom Solution</p>
+              <p className="mt-3 w-fit rounded-full bg-white/80 px-4 py-2 text-[28px] font-semibold italic leading-none tracking-[-0.06em] text-gray-900 shadow-[0_10px_28px_rgba(17,24,39,0.08)] backdrop-blur-sm sm:text-[34px]">
+                YA Motors
+              </p>
+            </div>
             <h1 className="max-w-5xl text-[clamp(2.35rem,7vw,5.25rem)] font-medium leading-[1.02] tracking-[-0.05em] text-gray-900 sm:text-[clamp(3rem,5vw,5.4rem)]">
               Your 24/7 AI Receptionist
             </h1>
             <p className="mt-6 max-w-2xl text-[15px] font-medium leading-[1.7] text-gray-700 sm:text-[17px]">
-              Never miss a rental enquiry again. The AI answers calls, quotes from your price sheet, captures the customer, and follows up by SMS or WhatsApp automatically.
+              Test the AI receptionist below. It can answer rental questions, quote demo prices, capture customer details, and prepare follow-up for the YA Motors team.
             </p>
             <div className="mt-8 flex flex-col gap-4 sm:mt-10 sm:flex-row sm:items-center sm:gap-5">
-              <WhatsAppCta variant="orange" />
-              <CtaLink href="#demo" variant="light">Try live demo</CtaLink>
+              <CtaLink href="#demo" variant="orange">Try live AI demo</CtaLink>
+              <WhatsAppCta variant="light" label="Message to book setup" />
             </div>
             <div className="mt-7 flex flex-wrap gap-2.5">
               {proofChips.map((chip) => (
@@ -440,16 +471,46 @@ function VapiDemoCard() {
 
   const buttonLabel = callState === "live" ? "Stop live AI call" : callState === "connecting" ? "Connecting..." : "Start live AI call";
   const buttonDisabled = callState === "missing-config" || callState === "connecting";
+  const demoStatusItems = [
+    hasConfig ? "Live Vapi assistant connected" : "Live Vapi assistant not connected",
+    "Uses demo price file",
+    "SMS/GHL shown as launch workflow",
+    "No real customer messages sent from this page yet",
+  ];
 
   return (
-    <section id="demo" className="bg-white py-16 sm:py-20 lg:py-28">
-      <div className="mx-auto grid max-w-[1440px] gap-8 px-5 sm:px-8 lg:grid-cols-[0.95fr_1.05fr] lg:px-12">
+    <section id="demo" className="bg-white py-14 sm:py-20 lg:py-24">
+      <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
+        <div className="mb-8 rounded-[28px] bg-gray-900 p-5 text-white shadow-[0_20px_60px_rgba(17,24,39,0.12)] sm:p-6">
+          <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
+            <div>
+              <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-[#F26522]">Main demo path</p>
+              <h2 className="mt-2 text-[clamp(1.8rem,4vw,3.2rem)] font-medium leading-[1.05] tracking-[-0.03em]">Try the live AI demo first.</h2>
+              <p className="mt-3 max-w-3xl text-[14px] leading-[1.7] text-gray-300 sm:text-[16px]">This is the core funnel: start the Vapi call, test the rental questions, then decide whether to build the working YA Motors version.</p>
+            </div>
+            <CtaLink href="#demo-call" variant="orange">Start demo flow</CtaLink>
+          </div>
+        </div>
+      </div>
+      <div id="demo-call" className="mx-auto grid max-w-[1440px] gap-8 px-5 sm:px-8 lg:grid-cols-[0.95fr_1.05fr] lg:px-12">
         <div>
           <SectionHeader
             eyebrow="Live Vapi demo"
             title="Experience the AI receptionist."
-            body="Use the live Vapi assistant and try rental questions that prove price lookup, lead capture, and quote follow-up."
+            body="Use the live Vapi assistant and test the exact questions a rental customer would ask before they call another provider."
           />
+          <div className="mb-5 rounded-[28px] bg-[#F7F7F7] p-5">
+            <p className="mb-4 text-[13px] font-semibold uppercase tracking-[0.12em] text-[#F26522]">How to test this demo</p>
+            <div className="grid gap-3">
+              {testSteps.map((step, index) => (
+                <div key={step} className="flex gap-3 rounded-2xl bg-white p-4 text-[14px] font-medium text-gray-800 shadow-[0_8px_20px_rgba(17,24,39,0.04)]">
+                  <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-gray-900 text-[12px] text-white">{index + 1}</span>
+                  {step}
+                </div>
+              ))}
+            </div>
+            <p className="mt-4 text-[13px] leading-[1.6] text-gray-500">Works in the browser. No install needed. If voice does not start, check microphone permission first.</p>
+          </div>
           <div className="grid gap-3">
             {demoScenarios.map((scenario) => {
               const Icon = scenario.icon;
@@ -500,7 +561,28 @@ function VapiDemoCard() {
                 ))}
               </div>
             </div>
+            <div className="mt-4 rounded-2xl border border-gray-100 bg-white p-4">
+              <p className="text-[13px] font-semibold text-gray-900">Demo status</p>
+              <div className="mt-4 grid gap-2 text-[13px] leading-[1.6] text-gray-700">
+                {demoStatusItems.map((item) => (
+                  <div key={item} className="flex gap-2">
+                    <Check className="mt-0.5 shrink-0 text-[#F26522]" size={15} />
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
+        </div>
+      </div>
+      <div className="mx-auto mt-10 max-w-[1440px] px-5 sm:px-8 lg:px-12">
+        <div className="grid gap-5 rounded-[28px] bg-[#F5F5F5] p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center">
+          <div>
+            <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-[#F26522]">After the demo</p>
+            <h3 className="mt-2 text-[clamp(1.7rem,3vw,2.8rem)] font-medium leading-[1.08] tracking-[-0.03em] text-gray-900">Like this? Build the working version for YA Motors.</h3>
+            <p className="mt-3 max-w-2xl text-[14px] leading-[1.7] text-gray-600">We replace demo prices with the approved YA Motors file before launch, then test the scripts and handoff rules before customers use it.</p>
+          </div>
+          <WhatsAppCta variant="orange" />
         </div>
       </div>
     </section>
@@ -768,9 +850,70 @@ function Offer() {
   );
 }
 
+function FaqSection() {
+  return (
+    <section className="bg-[#F5F5F5] py-16 sm:py-20 lg:py-24">
+      <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
+        <SectionHeader
+          eyebrow="Questions before setup"
+          title="The demo should answer the first question. These answer the next ones."
+          body="This keeps the page practical for a business owner who wants to test the call first, then understand what launch actually includes."
+        />
+        <div className="grid gap-4 lg:grid-cols-5">
+          {faqItems.map((item) => (
+            <article key={item.question} className="rounded-2xl bg-white p-5 shadow-[0_12px_36px_rgba(17,24,39,0.05)] lg:p-6">
+              <h3 className="text-[16px] font-semibold leading-[1.35] text-gray-900">{item.question}</h3>
+              <p className="mt-3 text-[13px] leading-[1.7] text-gray-600">{item.answer}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function MobileStickyCta() {
+  const [hidden, setHidden] = useState(false);
+  const whatsappHref = getWhatsAppLink();
+
+  useEffect(() => {
+    const targets = [document.getElementById("offer"), document.getElementById("footer")].filter(Boolean) as HTMLElement[];
+    if (!targets.length || typeof IntersectionObserver === "undefined") return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        setHidden(entries.some((entry) => entry.isIntersecting));
+      },
+      { threshold: 0.05 }
+    );
+
+    targets.forEach((target) => observer.observe(target));
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div className={`fixed inset-x-3 bottom-20 z-40 rounded-full bg-white/95 p-1.5 shadow-[0_14px_40px_rgba(17,24,39,0.18)] backdrop-blur-md transition-all duration-300 md:hidden ${hidden ? "pointer-events-none translate-y-4 opacity-0" : "translate-y-0 opacity-100"}`}>
+      <div className="grid grid-cols-[1.1fr_0.9fr] gap-1.5">
+        <a href="#demo" className="rounded-full bg-[#F26522] px-4 py-3 text-center text-[13px] font-semibold text-white">
+          Try AI demo
+        </a>
+        {whatsappHref ? (
+          <a href={whatsappHref} target="_blank" rel="noreferrer" className="rounded-full bg-gray-900 px-4 py-3 text-center text-[13px] font-semibold text-white">
+            Book setup
+          </a>
+        ) : (
+          <button type="button" disabled className="rounded-full bg-gray-200 px-4 py-3 text-center text-[13px] font-semibold text-gray-500">
+            Book setup
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function Footer() {
   return (
-    <footer className="bg-[#F5F5F5] px-5 py-8 sm:px-8 lg:px-12">
+    <footer id="footer" className="bg-[#F5F5F5] px-5 py-8 sm:px-8 lg:px-12">
       <div className="mx-auto flex max-w-[1440px] flex-col gap-3 text-[13px] text-gray-500 sm:flex-row sm:items-center sm:justify-between">
         <p>Demo page by Autosyntech for YA Motors.</p>
         <p>Vapi, SMS, WhatsApp, and GHL credentials are configured before launch.</p>
@@ -787,8 +930,10 @@ export default function App() {
       <OldWayVsSolution />
       <CompleteLoopIntegration />
       <DataDrivenPricing />
+      <FaqSection />
       <Offer />
       <Footer />
+      <MobileStickyCta />
       <VapiFloatingWidget />
     </main>
   );
