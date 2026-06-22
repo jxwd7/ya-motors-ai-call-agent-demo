@@ -271,8 +271,8 @@ function Navbar() {
       <header className="relative z-20 mx-auto max-w-[1440px] p-2 sm:p-3">
         <nav className="flex items-center justify-between rounded-full bg-white p-[5px] shadow-[0_2px_18px_rgba(0,0,0,0.04)]">
           <div className="flex items-center gap-6">
-            <a href="#" className="grid h-9 w-9 place-items-center rounded-full bg-gray-900 text-[10px] font-bold leading-[11px] tracking-tight text-white sm:h-10 sm:w-10">
-              YA
+            <a href="#" className="rounded-full bg-gray-900 px-4 py-2 text-[15px] font-semibold italic tracking-[-0.04em] text-white sm:px-5 sm:text-[16px]">
+              YA Motors
             </a>
             <a href="#" className="hidden text-[14px] font-semibold text-gray-900 sm:block">
               YA Motors AI Receptionist
@@ -371,7 +371,12 @@ function Hero() {
         <div className="flex-1" />
         <div className="mx-auto grid w-full max-w-[1440px] gap-8 px-5 pb-14 sm:px-8 sm:pb-16 lg:grid-cols-[1fr_460px] lg:items-end lg:px-12 lg:pb-20">
           <div>
-            <p className="mb-5 text-[13px] font-semibold uppercase leading-[14px] tracking-[0.12em] text-[#F26522] sm:mb-8">YA Motors Custom Solution</p>
+            <div className="mb-5 sm:mb-8">
+              <p className="text-[13px] font-semibold uppercase leading-[14px] tracking-[0.12em] text-[#F26522]">YA Motors Custom Solution</p>
+              <p className="mt-3 w-fit rounded-full bg-white/80 px-4 py-2 text-[28px] font-semibold italic leading-none tracking-[-0.06em] text-gray-900 shadow-[0_10px_28px_rgba(17,24,39,0.08)] backdrop-blur-sm sm:text-[34px]">
+                YA Motors
+              </p>
+            </div>
             <h1 className="max-w-5xl text-[clamp(2.35rem,7vw,5.25rem)] font-medium leading-[1.02] tracking-[-0.05em] text-gray-900 sm:text-[clamp(3rem,5vw,5.4rem)]">
               Your 24/7 AI Receptionist
             </h1>
